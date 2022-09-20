@@ -1,3 +1,4 @@
+[![Deploy a new S3 bucket with S3 Event Notifications configured.](https://github.com/NicholasYamamoto/pivot-bio-take-home-assignment/actions/workflows/deploy_new_bucket.yml/badge.svg?event=status)](https://github.com/NicholasYamamoto/pivot-bio-take-home-assignment/actions/workflows/deploy_new_bucket.yml)
 # Pivot Bio Take-Home Assignment - Senior Cloud Infrastructure Engineer interview
 Take-home assignment for the Pivot Bio - Senior Infrastructure Engineer interview.
 
