@@ -5,5 +5,5 @@ variable "bucket_name" {
 
 variable "sns_email_address" {
   type        = string
-  description = "The email address used to send S3 Event Notifications to via SNS and Lambda"
+  description = "The email address used to send S3 Event Notifications to via SNS"
 }

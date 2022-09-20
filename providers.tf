@@ -7,7 +7,7 @@ terraform {
   }
 }
 
-# Hard-coding the region for simplicity's sake
 provider "aws" {
+  # Hard-coding the region for simplicity's sake
   region = "us-east-2"
 }

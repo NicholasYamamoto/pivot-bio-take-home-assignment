@@ -4,13 +4,13 @@ on:
   # Specify this workflow as Manually triggered
   workflow_dispatch:
     inputs:
-      # Used to set the S3 bucket name in the create-bucket script
+      # Sets the S3 bucket name in the create-bucket script
       bucket_name:
         description: 'New S3 bucket name (MUST be globally unique!)'
         default: 'new_bucket'
         required: true
-      # Used to set the SNS notification email address in the create-email-lambda script
-      email_address:
+      # Sets the email address for the S3 Event SNS Topic Subscription
+      sns_email_address:
         description: 'Email Address for SNS notifications'
         default: 'foo@bar.com'
         required: true
@@ -26,7 +26,7 @@ jobs:
 
     steps:
       - name: 'Configuring S3 Event Notification email address.'
-        run: echo "S3 Event Notifications will be sent via SNS to ${{ github.event.inputs.email_address }}"
+        run: echo "S3 Event Notifications will be sent via SNS to ${{ github.event.inputs.sns_email_address }}"
 
       - name: 'Checking out the latest Master branch.'
         uses: actions/checkout@v3
@@ -34,13 +34,13 @@ jobs:
       - name: 'Installing and configuring the `setup-terraform` GitHubActions library.'
         uses: hashicorp/setup-terraform@v2
 
-      - name: 'Formatting Terraform code before initialization'
-        id: 'fmt'
-        run: terraform fmt -check
-
       - name: 'Initializing the Terraform project'
         id: 'init'
         run: terraform init
+
+      - name: 'Formatting Terraform code before initialization'
+        id: 'fmt'
+        run: terraform fmt -check
 
       - name: 'Validating the Terraform projects initialization'
         id: 'validate'
@@ -49,11 +49,9 @@ jobs:
       - name: 'Running `terraform plan'
         id: 'plan'
         run: |-
-          terraform plan -var="bucket_name=${{ github.event.inputs.bucket_name }}" -var="sns_email_address=${{ github.event.inputs.email_address }}" -no-color -input=false
+          terraform plan -var="bucket_name=${{ github.event.inputs.bucket_name }}" -var="sns_email_address=${{ github.event.inputs.sns_email_address }}" -no-color -input=false
 
       - name: 'Running `terraform apply` with the workflow inputs'
         id: 'apply'
         run: |-
-          terraform apply -var="bucket_name=${{ github.event.inputs.bucket_name }}" -var="sns_email_address=${{ github.event.inputs.email_address }}" -no-color -input=false
-
-
+          terraform apply -var="bucket_name=${{ github.event.inputs.bucket_name }}" -var="sns_email_address=${{ github.event.inputs.sns_email_address }}" -no-color -input=false
