@@ -1,0 +1,54 @@
+---
+name: Deploy a new S3 bucket with S3 Event Notifications configured.
+on:
+  # Specify this workflow as Manually triggered
+  workflow_dispatch:
+    inputs:
+      # Sets the S3 bucket name in the create-bucket script
+      bucket_name:
+        description: 'New S3 bucket name (MUST be globally unique!)'
+        default: 'new_bucket'
+        required: true
+      # Sets the email address for the S3 Event SNS Topic Subscription
+      sns_email_address:
+        description: 'Email Address for SNS notifications'
+        default: 'foo@bar.com'
+        required: true
+jobs:
+  create-and-deploy-new-bucket-to-aws:
+    name: 'Create and Deploy new S3 bucket to AWS'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'write'
+      id-token: 'write'
+    env:
+      # For demonstration purposes, I will provide my own personal AWS secrets
+      AWS_ACCESS_KEY_ID:  ${{ secrets.AWSACCESSKEYID }}
+      AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWSSECRETKEY }}
+
+    steps:
+      - name: 'Configuring S3 Event Notification email address.'
+        run: echo "S3 Event Notifications will be sent via SNS to ${{ github.event.inputs.sns_email_address }}"
+
+      - name: 'Checking out the latest Master branch.'
+        uses: actions/checkout@v3
+
+      - name: 'Installing and configuring the `setup-terraform` GitHubActions library.'
+        uses: hashicorp/setup-terraform@v2
+
+      - name: 'Initializing the Terraform project'
+        id: 'init'
+        run: terraform init
+
+      - name: 'Linting the Terraform project'
+        id: 'fmt'
+        run: terraform fmt -check
+
+      - name: 'Validating the Terraform project initialization'
+        id: 'validate'
+        run: terraform validate -no-color
+
+      - name: 'Running `terraform apply` with the user-provided inputs'
+        id: 'apply'
+        run: |-
+          terraform apply -var="bucket_name=${{ github.event.inputs.bucket_name }}" -var="sns_email_address=${{ github.event.inputs.sns_email_address }}" -no-color -input=false
