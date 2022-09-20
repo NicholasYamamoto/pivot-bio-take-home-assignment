@@ -23,6 +23,9 @@ jobs:
       id-token: 'write'
     env:
       GITHUB_USERNAME: NicholasYamamoto
+      # For demonstration purposes, I will provide my own personal AWS secrets
+      AWS_ACCESS_KEY_ID:  ${{ secrets.AWSACCESSKEYID }}
+      AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWSSECRETKEY }}
 
     steps:
       - name: 'Configuring S3 Event Notification email address.'
@@ -38,20 +41,15 @@ jobs:
         id: 'init'
         run: terraform init
 
-      - name: 'Formatting Terraform code before initialization'
+      - name: 'Linting the Terraform project'
         id: 'fmt'
         run: terraform fmt -check
 
-      - name: 'Validating the Terraform projects initialization'
+      - name: 'Validating the Terraform project initialization'
         id: 'validate'
         run: terraform validate -no-color
 
-      - name: 'Running `terraform plan'
-        id: 'plan'
-        run: |-
-          terraform plan -var="bucket_name=${{ github.event.inputs.bucket_name }}" -var="sns_email_address=${{ github.event.inputs.sns_email_address }}" -no-color -input=false
-
-      - name: 'Running `terraform apply` with the workflow inputs'
+      - name: 'Running `terraform apply` with the user-provided inputs'
         id: 'apply'
         run: |-
           terraform apply -var="bucket_name=${{ github.event.inputs.bucket_name }}" -var="sns_email_address=${{ github.event.inputs.sns_email_address }}" -no-color -input=false

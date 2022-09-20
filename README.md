@@ -1,5 +1,5 @@
-# pivot-bio-take-home-assignment
-Take-home assignment for the PivotBio - Senior Infrastructure Engineer interview.
+# Pivot Bio Take-Home Assignment - Senior Cloud Infrastructure Engineer interview
+Take-home assignment for the Pivot Bio - Senior Infrastructure Engineer interview.
 
 For this assignment, I was tasked with providing Terraform scripts that will create a new AWS S3 storage bucket and configure it to send an email to a specifiable email address whenever new objects are created in the bucket.
 
@@ -10,6 +10,9 @@ This assignment utilizes several useful services that AWS provides:
 * Amazon Simple Notification Service (SNS)
 * Amazon CloudWatch/EventBridge
 * Amazon Key Management Service (KMS)
+* Amazon Identity and Access Management (IAM)
+
+For the CI/CD pipeline, I decided to use GitHub Actions for its implementation.
 
 This repository is broken up into three scripts:
 * [`create-bucket.tf`](https://github.com/NicholasYamamoto/pivot-bio-take-home-assignment/tree/master/create-bucket.tf)
@@ -18,7 +21,6 @@ This repository is broken up into three scripts:
     * Configures the S3 bucket to use Server-Side Encryption (SSE) by default in order to harden security
 
 * [`configure-sns.tf`](https://github.com/NicholasYamamoto/pivot-bio-take-home-assignment/tree/master/configure-sns.tf)
-    * Creates an AWS Key Management Service (KMS) key used to encrypt/decrypt any published SNS messages
     * Creates an Amazon EventBridge Rule and Target to capture any `Object Created` events in any created S3 buckets
     * Creates an SNS Topic to log events defined by the EventBridge Event Rule
     * Creates an SNS Subscription to the SNS Topic to allow a specified email address to "subscribe" and be alerted of any events captured under the SNS Topic
@@ -30,14 +32,12 @@ This repository is broken up into three scripts:
         * `terraform init`
         * `terraform fmt`
         * `terraform validate`
-        * `terraform plan`
         * `terraform apply`
 
 # Design Choices
-To demonstrate my knowledge of AWS, I applied a few more "advanced" techniques when configuring the cloud infrastructure, such as:
+To demonstrate my knowledge of AWS, I applied a few more "upgraded" techniques when configuring the cloud infrastructure, such as:
 * Enabled and configured Server-Side Encryption (SSE) for S3, to harden security around any created storage buckets
-* Decided to implement the S3 Object Creation event notification using Amazon CloudWatch/EventBridge rather than setting up a simple S3 Event Notification, to demonstrate my familiarity with the more in-depth functionality of CloudWatch/EventBridge for future implementations
-* Created an AWS KMS key for SNS to allow encryption/decryption of published SNS messages to help obfuscate any potential sensitive/confidential data that could be included in the messages
+* Decided to implement the S3 Object Creation event notification using Amazon CloudWatch/EventBridge rather than setting up a simple S3 Event Notification, to demonstrate my familiarity with the more in-depth functionality of CloudWatch/EventBridge for any future work
 * Created an AWS KMS key to encrypt all objects within the created S3 bucket, to harden security around the contents of each S3 bucket itself
 * Created a GitHub Actions pipeline to deploy the S3 bucket (with SNS configuration) to AWS, to promote a full CI/CD software lifecycle
 
