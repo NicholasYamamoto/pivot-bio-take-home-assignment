@@ -1,0 +1,17 @@
+---
+name: Destroy all recently provisioned resources.
+on:
+  # Specify this workflow as Manually triggered
+  workflow_dispatch:
+jobs:
+  destroy-everything:
+    name: "Destroy AWS"
+    runs-on: ubuntu-latest
+    steps:
+        - name: 'Showing the `terraform destroy` plan before executing'
+          run: terraform plan -destroy
+          continue-on-error: true
+
+        - name: 'Destroying all provisioned resources.'
+          id: destroy
+          run: terraform destroy -auto-approve
