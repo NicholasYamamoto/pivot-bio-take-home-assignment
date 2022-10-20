@@ -51,4 +51,4 @@ jobs:
       - name: 'Running `terraform apply` with the user-provided inputs'
         id: 'apply'
         run: |-
-          terraform apply -var="bucket_name=${{ github.event.inputs.bucket_name }}" -var="sns_email_address=${{ github.event.inputs.sns_email_address }}" -no-color -input=false
+          terraform apply -var="bucket_name=${{ github.event.inputs.bucket_name }}" -var="sns_email_address=${{ github.event.inputs.sns_email_address }}" -auto-approve -no-color -input=false
